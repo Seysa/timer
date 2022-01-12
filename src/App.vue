@@ -24,7 +24,7 @@
     >
       <div id="sessions" v-if="!running">
         <div id="modifysessions" class="bg-gray-400 text-black rounded-full">
-          <button class="button" @click="if (periods) periods--;">
+          <button class="button" @click="if (periods > 1) periods--;">
             <img src="./assets/img/minus.svg" alt="-" />
           </button>
           <span class="px-2"
@@ -73,18 +73,18 @@ const BREAK_MINUTES = 5;
 const running = ref(false);
 const workMode = ref(true);
 const periods = ref(4);
-const minutes = ref(WORK_MINUTES);
-const seconds = ref(0);
+const minutes = ref(0);
+const seconds = ref(2);
 
 function restartTimer() {
-  minutes.value = WORK_MINUTES;
-  seconds.value = 0;
+  minutes.value = 0;
+  seconds.value = 2;
   workMode.value = true;
 }
 
 function breakTimer() {
-  minutes.value = BREAK_MINUTES;
-  seconds.value = 0;
+  minutes.value = 0;
+  seconds.value = 2;
   workMode.value = false;
 }
 
@@ -127,6 +127,10 @@ function startTimer() {
         } else {
           endOfPauseSound.play().then(() => {
             restartTimer();
+            if (periods.value > 0) {
+              periods.value--;
+              startTimer();
+            }
           });
         }
         return;
