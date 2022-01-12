@@ -83,8 +83,8 @@ function restartTimer() {
 }
 
 function breakTimer() {
-  minutes.value = 0;
-  seconds.value = 2;
+  minutes.value = BREAK_MINUTES;
+  seconds.value = 0;
   workMode.value = false;
 }
 
