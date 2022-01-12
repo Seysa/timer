@@ -73,8 +73,8 @@ const BREAK_MINUTES = 5;
 const running = ref(false);
 const workMode = ref(true);
 const periods = ref(4);
-const minutes = ref(0);
-const seconds = ref(2);
+const minutes = ref(WORK_MINUTES);
+const seconds = ref(0);
 
 function restartTimer() {
   minutes.value = WORK_MINUTES;
