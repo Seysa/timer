@@ -1,18 +1,16 @@
 <template>
   <div
-    class="wrapper h-screen w-full flex flex-col justify-center gap-20 items-center"
-    :class="{
-      idle: !running,
-      work: running && workMode,
-      break: running && !workMode,
-    }"
+    class="wrapper h-screen font-roboto w-full flex flex-col justify-center gap-20 items-center"
+    :class="activityColor"
   >
     <div id="status">
-      <h1 v-if="!running" class="text-5xl text-white">Start when ready!</h1>
-      <h1 v-else-if="workMode" class="text-7xl text-white font-bold">work</h1>
-      <h1 v-else class="text-7xl text-white font-bold">pause</h1>
+      <h1 v-if="!running" class="text-4xl sm:text-5xl text-white text-center">
+        Start when ready!
+      </h1>
+      <h1 v-else-if="workMode" class="status">work</h1>
+      <h1 v-else class="status">pause</h1>
     </div>
-    <div id="time" class="text-9xl text-white mx-auto text-center">
+    <div id="time" class="text-6xl sm:text-9xl text-white mx-auto text-center">
       <span id="minutes">{{ toTwoDigits(minutes) }}</span>
       :
       <span id="seconds">{{ toTwoDigits(seconds) }}</span>
@@ -20,7 +18,7 @@
 
     <div
       id="controls"
-      class="flex flex-col justify-center items-center gap-4 bg-gray-800 p-2 text-xl rounded-lg text-gray-100"
+      class="flex flex-col justify-center items-center gap-2 bg-gray-800 p-2 text-xl rounded-lg text-gray-100"
     >
       <div id="sessions" v-if="!running">
         <div id="modifysessions" class="bg-gray-400 text-black rounded-full">
@@ -36,9 +34,9 @@
             <img src="./assets/img/plus.svg" alt="+" />
           </button>
         </div>
-        <div id="totaltime" class="text-center">
-          {{ minutesToHourMinutes(periods * 30) }}
-        </div>
+      </div>
+      <div id="totaltime" v-if="!running" class="text-center">
+        {{ minutesToHourMinutes(periods * 30) }}
       </div>
       <button
         class="bg-gray-100 p-2 text-black flex gap-4"
@@ -75,6 +73,19 @@ const workMode = ref(true);
 const periods = ref(4);
 const minutes = ref(WORK_MINUTES);
 const seconds = ref(0);
+
+const activityColor = computed(() => {
+  const res = ["bg-gradient-to-tr"];
+  if (!running.value) {
+    res.push("from-yellow-700", "to-yellow-500");
+  } else if (workMode.value) {
+    res.push("from-red-800", "to-red-500");
+  } else {
+    // is pause
+    res.push("from-green-800", "to-green-500");
+  }
+  return res;
+});
 
 function restartTimer() {
   minutes.value = WORK_MINUTES;
@@ -154,19 +165,7 @@ function stopTimer() {
   @apply bg-gray-100 text-white w-7 p-2 rounded-full hover:bg-white transition-colors;
 }
 
-.work {
-  @apply bg-gradient-to-tr from-red-800 to-red-500;
-}
-
-.break {
-  @apply bg-gradient-to-tr from-green-800 to-green-500;
-}
-
-.idle {
-  @apply bg-gradient-to-tr from-yellow-700 to-yellow-500;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+.status {
+  @apply text-5xl md:text-7xl text-white font-bold;
 }
 </style>
