@@ -73,18 +73,18 @@ const BREAK_MINUTES = 5;
 const running = ref(false);
 const workMode = ref(true);
 const periods = ref(4);
-const minutes = ref(0);
-const seconds = ref(2);
+const minutes = ref(WORK_MINUTES);
+const seconds = ref(0);
 
 function restartTimer() {
-  minutes.value = 0;
-  seconds.value = 2;
+  minutes.value = WORK_MINUTES;
+  seconds.value = 0;
   workMode.value = true;
 }
 
 function breakTimer() {
-  minutes.value = 0;
-  seconds.value = 2;
+  minutes.value = BREAK_MINUTES;
+  seconds.value = 0;
   workMode.value = false;
 }
 
@@ -114,7 +114,7 @@ function switchTimer() {
 }
 
 function startTimer() {
-  running.value = true;
+  if (!running.value) running.value = true;
   timerInterval = setInterval(() => {
     if (seconds.value === 0) {
       if (minutes.value === 0) {
