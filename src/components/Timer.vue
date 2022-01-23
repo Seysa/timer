@@ -27,9 +27,13 @@
       id="controls"
       class="flex flex-col justify-center items-center gap-2 bg-silver border-2 border-gray-800 p-2 text-xl rounded-lg text-gray-100"
     >
-      <div id="sessions" v-if="!running">
+      <div id="sessions">
         <div id="modifysessions" class="bg-gray-400 rounded-full">
-          <button class="button" @click="if (periods > 1) periods--;">
+          <button
+            v-if="!running"
+            class="button"
+            @click="if (periods > 1) periods--;"
+          >
             <img src="../assets/img/minus.svg" alt="-" />
           </button>
           <span class="px-2"
@@ -37,17 +41,13 @@
               periods > 1 ? "s" : ""
             }}</span
           >
-          <button class="button" @click="periods++">
+          <button v-if="!running" class="button" @click="periods++">
             <img src="../assets/img/plus.svg" alt="+" />
           </button>
         </div>
       </div>
-      <div id="totaltime" v-if="!running" class="text-center">
-        {{
-          minutesToHourMinutes(
-            periods * (props.worktime.minutes + props.breaktime.minutes)
-          )
-        }}
+      <div id="totaltime" class="text-center">
+        {{ totalTime }}
       </div>
       <button
         class="p-2 bg-primary rounded-xl text-white flex gap-4"
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, inject, onUnmounted, Ref, ref } from "vue";
 import { defineProps } from "vue";
 
 const props = defineProps<{
@@ -87,6 +87,7 @@ const workMode = ref(true);
 const periods = ref(4);
 const minutes = ref(props.worktime.minutes);
 const seconds = ref(props.worktime.seconds);
+const sound: Ref<boolean> = inject("sound") || ref(false);
 
 const activityColor = computed(() => {
   const res = [];
@@ -109,16 +110,25 @@ function restartTimer() {
 
 function breakTimer() {
   minutes.value = props.breaktime.minutes;
-  seconds.value = props.worktime.seconds;
+  seconds.value = props.breaktime.seconds;
   workMode.value = false;
 }
 
-function minutesToHourMinutes(_minutes: number) {
-  const hours = Math.floor(_minutes / 60);
-  const hourString = hours > 0 ? `${hours} hour${hours > 1 ? "s" : ""} ` : "";
-  const minutes = _minutes % 60;
-  const minuteString = minutes > 0 ? `${minutes} minutes` : "0 minute";
-  return `${hourString}${minuteString}`;
+const totalTime = computed(() => {
+  return secondsToHMS(
+    periods.value *
+      (props.worktime.minutes * 60 +
+        props.worktime.seconds +
+        props.breaktime.minutes * 60 +
+        props.breaktime.seconds)
+  );
+});
+
+function secondsToHMS(_seconds: number) {
+  const hours = Math.floor(_seconds / 3600);
+  const minutes = Math.floor((_seconds % 3600) / 60);
+  const seconds = _seconds % 60;
+  return `${hours}h${minutes}m${seconds}s`;
 }
 
 let timerInterval = -1;
@@ -145,18 +155,16 @@ function startTimer() {
       if (minutes.value === 0) {
         stopTimer();
         if (workMode.value) {
-          endOfWorkSound.play().then(() => {
-            breakTimer();
-            startTimer();
-          });
+          if (sound.value) endOfWorkSound.play();
+          breakTimer();
+          startTimer();
         } else {
-          endOfPauseSound.play().then(() => {
-            restartTimer();
-            if (periods.value > 0) {
-              periods.value--;
-              startTimer();
-            }
-          });
+          if (sound.value) endOfPauseSound.play();
+          restartTimer();
+          if (periods.value > 0) {
+            periods.value--;
+            startTimer();
+          }
         }
         return;
       }
@@ -172,6 +180,8 @@ function stopTimer() {
   clearInterval(timerInterval);
   running.value = false;
 }
+
+onUnmounted(() => stopTimer());
 </script>
 
 <style scoped>

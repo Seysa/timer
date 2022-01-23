@@ -2,9 +2,9 @@
   <div v-if="!choosen" class="h-full flex flex-col justify-center bg-pastel">
     <form
       @submit.prevent="submit"
-      class="bg-silver p-2 text-white flex flex-col gap-2 shadow-xl m-1 shadow-silver border-2 border-gray-800 rounded"
+      class="bg-silver p-2 text-white flex flex-col gap-2 shadow-xl m-1 shadow-silver border-2 border-gray-800 rounded w-2/3 mx-auto"
     >
-      <div id="work">
+      <div id="work" class="mx-auto md:text-2xl">
         Work duration: <br />
         <div class="ml-8">
           <input
@@ -45,7 +45,9 @@
         </div>
       </div>
 
-      <button type="submit" class="p-2 bg-primary rounded-xl">Submit</button>
+      <button type="submit" class="p-2 bg-primary rounded-xl mt-4">
+        Submit
+      </button>
     </form>
   </div>
   <Timer v-else :breaktime="breakDuration" :worktime="workDuration" />
@@ -59,7 +61,6 @@ const workDuration = reactive({
   minutes: 0,
   seconds: 0,
 });
-
 const breakDuration = reactive({
   minutes: 0,
   seconds: 0,
@@ -74,6 +75,8 @@ function submit() {
 .test {
   background-color: #e2f0cb;
 }
+
+/* this removes input number arrows */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
