@@ -1,11 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
+import Pomodoro from "../views/Pomodoro.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    redirect: "/pomodoro",
+  },
+  {
+    path: "/pomodoro",
+    name: "Pomodoro",
+    component: Pomodoro,
+  },
+  {
+    path: "/custom",
+    name: "Custom",
+    component: () => import("../views/Custom.vue"),
   },
 ];
 

@@ -1,3 +1,2 @@
-- Enchaîner les sessions si il en reste
-  - faire disparaitre les input
-  - afficher à la place le nombre de périodes restantes
+- afficher le nombre de périodes restantes
+- enlever la bordure du stop timer quand le timer est lancé
