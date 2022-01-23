@@ -21,6 +21,7 @@ provide("sound", sound);
 watch(sound, (val) => {
   provide("sound", val);
 });
+console.log(process.env.BASE_URL);
 </script>
 
 <style scoped>
